@@ -1,0 +1,34 @@
+-- Keep a log of any SQL queries you execute as you solve the mystery.
+-- First i used .schema to see what data the file had, then i used SELECT description, day, month, street FROM crime_scene_reports;
+-- It was a huge amount of data so i narrow it down to specific day of crime with SELECT description FROM crime_scene_reports WHERE month = 7 AND day = 28 AND street = 'Humphrey Street'; (information given in PSET)
+-- According to that information, a few interviews took place that day so i'll check that now: SELECT transcript FROM interviews WHERE month = 7 AND day = 28;
+-- Data to look up: security cameras from bakery, he used an ATM close to the bakery, flight tickets
+-- well very smart of me, didnt select the names of the people in the interview so here we go again: SELECT transcript, name FROM interviews WHERE month = 7 AND day = 28;
+-- so seeing that Lily's sons arrived in paris after the robbery i would like to check on that to.
+-- early in the morning, suspect seen in ATM, ten minutes of the theft security cameras from parking lot.
+-- ATM transtactions: SELECT * FROM atm_transactions WHERE year = 2021 AND month = 7 AND day = 28;
+-- didnt know location but knowing it was close to the bakery we asume that it was in location Humphrey Lane, let's use that to filter a few more: SELECT * FROM atm_transactions WHERE year = 2021 AND month = 7 AND day = 28 AND atm_location = 'Humphrey Lane';
+-- quite a few transactions plus i cant asume he withdraw neither deposit money, im sure suspect is in, at least, first half of the table cause it was early in the morning, my fair guess is he deposit so the other suspect may buy the tickets but pointless guess for now.
+-- I'll look for a way to track those id.
+-- looking bank data and people data i think i can match the people on the list to his bank account
+-- Just to gather more information before going for security cameras i grab all the data of bank and people just to join them, wont be to usefull now but once i have the information from cameras im sure this will lead to something:
+-- SELECT * FROM bank_accounts INNER JOIN people ON bank_accounts.person_id = people.id; (now that i see the result, id from people was unnecessary)
+-- before checking, time of theft was 10:15 so according to Ruth interview it has to be at 10:25
+-- Wanted to take a look to the activity of the bakery security logs: SELECT activity, license_plate FROM bakery_security_logs WHERE year = 2021 AND month = 7 AND day = 28 AND hour  = 10;
+-- joined that activity with people information : SELECT * from people INNER JOIN bakery_security_logs ON people.license_plate = bakery_security_logs.license_plate WHERE year = 2021 AND month = 7 AND day = 28 AND hour  = 10;
+-- i just need to gather information from phonecalls, flights and passengers to complete all the data
+-- first suspects for now due to phonecalls = Vanessa ID 221103 (called: 456), Bruce ID 686048 (120), Barry ID 243696 (583), Sofia ID 398010 (51), Diana 514354 (49), Keelsey ID 560886 (50)
+-- i got some usefull information from flights, first i needed information on the city airport so: SELECT * FROM airports, pretty simple but got me the id that i needed to search for flights on that day: SELECT * FROM flights WHERE origin_airport_id = 8 AND year = 2021 AND month = 7 AND day = 29;
+-- relevant flights id = 18,23,36,43,53
+-- SELECT * FROM passengers WHERE flight_id = 18/23/36/43/53 (i put every relevant flight id with OR)
+-- now i just have to match passport numbers
+-- first catch Bruce, flight id 36 seat 4A. second catch was luca same flight seat 7B, diana third catch flight id 18, fourth catch Kelsey.36 6d
+-- considering 3 of them where on the same flight ill take my chances and say they where the ones to do it.
+-- well, i tried checking with check50 and it seems like im wrong so i think i should sheck for transtactions and phone calls now cause if i remeber correctly, thief made a phone call to get the tickets and he withdraw money from a ATM.
+-- seeing the phonecalls from that(SELECT * FROM phone_calls WHERE year = 2021 AND month = 7 AND day = 28;) day the first one i catch under a minute it was from bruce to this number: (375) 555-8161, ill find out who he is.
+-- Only call from under a minute is to a guy called Robin, let's get more info about him. (SELECT name FROM people WHERE phone_number = '(375) 555-8161')
+-- Now if a can see the ATM transaction im pretty confident that these two are the ones who should be guilty. First i'll get more info about them. SELECT * from people WHERE phone_number = '(375) 555-8161';
+-- Robin ID 864400, plate = 4V16VO0
+-- Bruce ID 686048, PASSPORT = 5773159633, PLATE = 94KL13X - account_ number = 49610011 (used te same query from when i joined bank_account and people data but searching for Bruce number only)
+-- (SELECT * FROM atm_transaction WHERE account_number = 49610011 + i type the month day and year of robbery) Bruce withdraw 50 dolars
+-- im pretty confident that Bruce and Robin did this now.

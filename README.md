@@ -1,18 +1,18 @@
 Welcome!
 
-About
+#About
 Welcome to my GitHub repository! Here, you'll find a collection of projects primarily written in Python and C, with a touch of CSS and HTML. 
 Whether you're a fellow developer, an enthusiast, or just curious, I hope you find something interesting and valuable in this repository.
 
-Projects
+#Projects
 Explore a variety of projects that showcase my skills and passion for programming. 
 From Python scripts to C applications, and a dash of web development with CSS and HTML, there's a little bit of everything to dive into.
 
-Contributions
+#Contributions
 Feel free to fork, contribute, or use any of the code you find here in your own projects. 
 Collaboration and learning from each other are what make the open-source community thrive.
 
-Contact
+#Contact
 If you have any questions, suggestions, or just want to chat, don't hesitate to reach out. I'm always eager to connect with fellow developers and learners.
 e-mail: joacodelvallelietti@hotmail.com / delvallelietti@gmail.com
 
